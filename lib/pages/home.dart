@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -6,18 +9,45 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  Map data = {};
+  DateTime Time;
+  Timer timer;
+
+  void updateTime() {
+    setState(() {
+      Time = Time.add(Duration(seconds: 1));
+    });
+  }
+
+  void initUpdateTime() async {
+    try {
+      timer = Timer.periodic(Duration(seconds: 1), (Timer t) => updateTime());
+    } catch (e) {
+      print('error => $e');
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    try {
+      initUpdateTime();
+    } catch (Exception) {
+      print('error => $Exception');
+    }
   }
-
-  Map data = {};
 
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context).settings.arguments;
-    print('data : $data');
+    try {
+      if (Time == null) {
+        Time = DateTime.parse(data['time']);
+      }
+    } catch (e) {
+      print('error => setting Time value => $e');
+    }
     return Scaffold(
       backgroundColor: (data['daytime']) ? Colors.black87 : Colors.white,
       body: Padding(
@@ -45,7 +75,7 @@ class _HomeState extends State<Home> {
               height: 20,
             ),
             Text(
-              data['time'],
+              DateFormat.Hm().format(Time),
               style: TextStyle(
                 fontSize: 60,
                 color: (data['daytime']) ? Colors.white : Colors.black87,
@@ -66,6 +96,7 @@ class _HomeState extends State<Home> {
                 'time': RecData['time'],
                 'daytime': RecData['daytime'],
               };
+              Time = DateTime.parse(data['time']);
             });
           }
           ;
@@ -81,7 +112,7 @@ class _HomeState extends State<Home> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    timer?.cancel();
     super.dispose();
   }
 }

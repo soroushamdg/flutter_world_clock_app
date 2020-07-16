@@ -28,6 +28,7 @@ class WorldTime {
       };
 
       DateTime now = DateTime.parse(datetime);
+
       now = (offset['sign'] == '+')
           ? now.add(Duration(
               hours: int.parse(offset['hour']),
@@ -41,7 +42,7 @@ class WorldTime {
               int.parse(time.split(':')[0]) < 5)
           ? true
           : false;
-      print(DayTime);
+      time = now.toString();
       status = true;
     } catch (e) {
       print('caught error : $e');
