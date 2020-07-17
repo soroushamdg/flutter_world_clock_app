@@ -9,9 +9,13 @@ Simple flutter application that can show World Clock.
 - [x] ability to save and read previous chosen timezone.
 - [x] convert static clock to live.
 - [x] change theme by DayTime, NightTime
-- [ ] download and view random background from timezone location.
+- [x] download and view random background from timezone location.
+- [x] change time and location view from simple to a card. -> pic:1
 - [ ] use user location as default timezone.
 - [ ] ability to change between analog and digital
 - [ ] ability to add multiple timezones
 - [ ] ability to get weather data
 
+
+### screen-shots :
+![pic:1](scr1.png)

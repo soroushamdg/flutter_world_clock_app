@@ -38,7 +38,7 @@ class _HomeState extends State<Home> {
       });
     } else {
       setState(() {
-        backgroundURL = null;
+        backgroundURL = '';
       });
     }
   }
@@ -77,39 +77,52 @@ class _HomeState extends State<Home> {
                     fit: BoxFit.cover))
             : null,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 120, 0, 120),
-          child: SafeArea(
-              child: Column(
-            children: <Widget>[
-              Image.network(this.backgroundURL.toString()),
-              SizedBox(
-                height: 20,
+          padding: const EdgeInsets.all(8.0),
+          child: Center(
+            child: Card(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Colors.white70, width: 0.5),
+                borderRadius: BorderRadius.circular(15),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    data['location'],
-                    style: TextStyle(
-                      fontSize: 28,
-                      letterSpacing: 2,
-                      color: (data['daytime']) ? Colors.black87 : Colors.white,
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Text(
-                DateFormat.Hm().format(Time),
-                style: TextStyle(
-                  fontSize: 60,
-                  color: (data['daytime']) ? Colors.black87 : Colors.white,
+              color: (data['daytime']) ? Colors.white : Colors.white10,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 60, vertical: 20),
+                child: Container(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        data['location'],
+                        style: TextStyle(
+                          fontSize: 28,
+                          letterSpacing: 2,
+                          color:
+                              (data['daytime']) ? Colors.black87 : Colors.white,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        DateFormat.Hm().format(Time),
+                        style: TextStyle(
+                          fontSize: 60,
+                          color:
+                              (data['daytime']) ? Colors.black87 : Colors.white,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              )
-            ],
-          )),
+              ),
+            ),
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(

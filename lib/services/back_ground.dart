@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 
-String API_ACCESSKEY = '';
+String API_ACCESSKEY = '5u5I4Yy8KLFcsueLMBacfePyL24Lgufe0YEm2JxS8io';
 
 class BackGrounder {
   String location;
@@ -23,7 +23,7 @@ class BackGrounder {
       print(response.statusCode);
       if (response.statusCode == 200) {
         Map jsonData = jsonDecode(response.body);
-        this.image_url = jsonData['results'][0]['urls']['small'];
+        this.image_url = jsonData['results'][0]['urls']['regular'];
         print(this.image_url);
       }
     } catch (e) {
