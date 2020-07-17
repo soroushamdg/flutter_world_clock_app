@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:WorldClock/services/back_ground.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -12,6 +12,7 @@ class _HomeState extends State<Home> {
   Map data = {};
   DateTime Time;
   Timer timer;
+  String backgroundURL;
 
   void updateTime() {
     setState(() {
@@ -24,6 +25,21 @@ class _HomeState extends State<Home> {
       timer = Timer.periodic(Duration(seconds: 1), (Timer t) => updateTime());
     } catch (e) {
       print('error => $e');
+    }
+  }
+
+  Future<void> getUpdateBackground() async {
+    BackGrounder bg =
+        BackGrounder(location: data['location'], light: data['daytime']);
+    await bg.get_background();
+    if (bg.image_url != null && bg.image_url.isNotEmpty) {
+      setState(() {
+        backgroundURL = bg.image_url;
+      });
+    } else {
+      setState(() {
+        backgroundURL = null;
+      });
     }
   }
 
@@ -44,12 +60,16 @@ class _HomeState extends State<Home> {
     try {
       if (Time == null) {
         Time = DateTime.parse(data['time']);
+        getUpdateBackground();
       }
     } catch (e) {
       print('error => setting Time value => $e');
     }
+
     return Scaffold(
-      backgroundColor: (data['daytime']) ? Colors.white : Colors.black87,
+      backgroundColor: (this.backgroundURL.isNotEmpty)
+          ? Image.network(this.backgroundURL)
+          : (data['daytime']) ? Colors.white : Colors.black87,
       body: Padding(
         padding: const EdgeInsets.fromLTRB(0, 120, 0, 120),
         child: SafeArea(
@@ -95,7 +115,9 @@ class _HomeState extends State<Home> {
                 'time': RecData['time'],
                 'daytime': RecData['daytime'],
               };
+
               Time = DateTime.parse(data['time']);
+              getUpdateBackground();
             });
           }
           ;
