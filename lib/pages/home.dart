@@ -12,7 +12,7 @@ class _HomeState extends State<Home> {
   Map data = {};
   DateTime Time;
   Timer timer;
-  String backgroundURL;
+  String backgroundURL = '';
 
   void updateTime() {
     setState(() {
@@ -28,7 +28,7 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Future<void> getUpdateBackground() async {
+  void getUpdateBackground() async {
     BackGrounder bg =
         BackGrounder(location: data['location'], light: data['daytime']);
     await bg.get_background();
@@ -67,42 +67,50 @@ class _HomeState extends State<Home> {
     }
 
     return Scaffold(
-      backgroundColor: (this.backgroundURL.isNotEmpty)
-          ? Image.network(this.backgroundURL)
-          : (data['daytime']) ? Colors.white : Colors.black87,
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 120, 0, 120),
-        child: SafeArea(
-            child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  data['location'],
-                  style: TextStyle(
-                    fontSize: 28,
-                    letterSpacing: 2,
-                    color: (data['daytime']) ? Colors.black87 : Colors.white,
-                  ),
-                )
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Text(
-              DateFormat.Hm().format(Time),
-              style: TextStyle(
-                fontSize: 60,
-                color: (data['daytime']) ? Colors.black87 : Colors.white,
+      backgroundColor: (data['daytime']) ? Colors.white : Colors.black87,
+      body: Container(
+        decoration: (this.backgroundURL.isNotEmpty)
+            ? BoxDecoration(
+                image: DecorationImage(
+                    image: NetworkImage(
+                        'http://' + this.backgroundURL.split('//')[1]),
+                    fit: BoxFit.cover))
+            : null,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 120, 0, 120),
+          child: SafeArea(
+              child: Column(
+            children: <Widget>[
+              Image.network(this.backgroundURL.toString()),
+              SizedBox(
+                height: 20,
               ),
-            )
-          ],
-        )),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    data['location'],
+                    style: TextStyle(
+                      fontSize: 28,
+                      letterSpacing: 2,
+                      color: (data['daytime']) ? Colors.black87 : Colors.white,
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                DateFormat.Hm().format(Time),
+                style: TextStyle(
+                  fontSize: 60,
+                  color: (data['daytime']) ? Colors.black87 : Colors.white,
+                ),
+              )
+            ],
+          )),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
