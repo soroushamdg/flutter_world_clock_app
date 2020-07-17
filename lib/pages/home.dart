@@ -49,7 +49,7 @@ class _HomeState extends State<Home> {
       print('error => setting Time value => $e');
     }
     return Scaffold(
-      backgroundColor: (data['daytime']) ? Colors.black87 : Colors.white,
+      backgroundColor: (data['daytime']) ? Colors.white : Colors.black87,
       body: Padding(
         padding: const EdgeInsets.fromLTRB(0, 120, 0, 120),
         child: SafeArea(
@@ -66,7 +66,7 @@ class _HomeState extends State<Home> {
                   style: TextStyle(
                     fontSize: 28,
                     letterSpacing: 2,
-                    color: (data['daytime']) ? Colors.white : Colors.black87,
+                    color: (data['daytime']) ? Colors.black87 : Colors.white,
                   ),
                 )
               ],
@@ -78,7 +78,7 @@ class _HomeState extends State<Home> {
               DateFormat.Hm().format(Time),
               style: TextStyle(
                 fontSize: 60,
-                color: (data['daytime']) ? Colors.white : Colors.black87,
+                color: (data['daytime']) ? Colors.black87 : Colors.white,
               ),
             )
           ],
@@ -87,7 +87,6 @@ class _HomeState extends State<Home> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           dynamic RecData = await Navigator.pushNamed(context, '/location');
-          print(RecData);
           if (RecData != null) {
             setState(() {
               data = {
@@ -103,9 +102,9 @@ class _HomeState extends State<Home> {
         },
         child: Icon(
           Icons.map,
-          color: (data['daytime']) ? Colors.blue[800] : Colors.white,
+          color: (data['daytime']) ? Colors.white : Colors.blue[50],
         ),
-        backgroundColor: (data['daytime']) ? Colors.white54 : Colors.blueAccent,
+        backgroundColor: (data['daytime']) ? Colors.blueAccent : Colors.white60,
       ),
     );
   }

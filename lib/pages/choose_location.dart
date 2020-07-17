@@ -38,7 +38,6 @@ class _ChooseLocationState extends State<ChooseLocation> {
     setState(() {
       loading = true;
     });
-    print('updating time for $index');
     WorldTime time = locations[index];
     await time.getTime();
     try {

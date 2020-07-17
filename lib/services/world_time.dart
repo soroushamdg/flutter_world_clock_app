@@ -12,13 +12,11 @@ class WorldTime {
   WorldTime({this.location, this.flagURL, this.urlEndpoint});
 
   Future<void> getTime() async {
-    print('running response');
     try {
       Response response =
           await get('http://worldtimeapi.org/api/timezone/$urlEndpoint');
 
       Map data = jsonDecode(response.body);
-      print(data);
 
       String datetime = data['datetime'];
       Map offset = {
@@ -38,10 +36,10 @@ class WorldTime {
               minutes: int.parse(offset['minutes'])));
 
       time = DateFormat.Hm().format(now); //set the time property
-      DayTime = (int.parse(time.split(':')[0]) > 18 &&
+      DayTime = (int.parse(time.split(':')[0]) > 18 ||
               int.parse(time.split(':')[0]) < 5)
-          ? true
-          : false;
+          ? false
+          : true;
       time = now.toString();
       status = true;
     } catch (e) {
