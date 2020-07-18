@@ -11,6 +11,13 @@ class WorldTime {
   bool DayTime;
   WorldTime({this.location, this.flagURL, this.urlEndpoint});
 
+  void setDayTimeBool(String time) {
+    DayTime = (int.parse(time.split(':')[0]) > 18 ||
+            int.parse(time.split(':')[0]) < 5)
+        ? false
+        : true;
+  }
+
   Future<void> getTime() async {
     try {
       Response response =
@@ -36,10 +43,7 @@ class WorldTime {
               minutes: int.parse(offset['minutes'])));
 
       time = DateFormat.Hm().format(now); //set the time property
-      DayTime = (int.parse(time.split(':')[0]) > 18 ||
-              int.parse(time.split(':')[0]) < 5)
-          ? false
-          : true;
+      setDayTimeBool(time);
       time = now.toString();
       status = true;
     } catch (e) {

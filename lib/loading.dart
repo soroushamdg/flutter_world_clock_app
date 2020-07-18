@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:WorldClock/services/world_time.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoadingScreen extends StatefulWidget {
@@ -28,22 +29,29 @@ class _LoadingScreenState extends State<LoadingScreen> {
             location: location,
             flagURL: flagURL,
             urlEndpoint: urlEndpoint);
+        await instance.getTime();
       } else {
         instance = WorldTime(
-            //setting default world time.
-            location: 'Toronto',
-            flagURL: 'canada.png',
-            urlEndpoint: 'America/Toronto');
+            //setting default time as local time
+            location: 'Local time',
+            flagURL: 'local.png',
+            urlEndpoint: 'LOCALTIME');
+        instance.status = true;
+        instance
+            .setDayTimeBool(DateFormat.Hm().format(DateTime.now().toLocal()));
+        instance.time = DateTime.now().toLocal().toString();
       }
     } catch (e) {
       print('error => loading last worldtime => $e');
       instance = WorldTime(
-          //setting default world time.
-          location: 'Toronto',
-          flagURL: 'canada.png',
-          urlEndpoint: 'America/Toronto');
+          //setting default time as local time
+          location: 'Local time',
+          flagURL: 'local.png',
+          urlEndpoint: 'LOCALTIME');
+      instance.status = true;
+      instance.setDayTimeBool(DateFormat.Hm().format(DateTime.now().toLocal()));
+      instance.time = DateTime.now().toLocal().toString();
     }
-    await instance.getTime();
     if (instance.status == true) {
       Navigator.pushReplacementNamed(context, '/home', arguments: {
         'location': instance.location,
