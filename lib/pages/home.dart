@@ -152,6 +152,7 @@ class AnalogClockCard extends StatefulWidget {
 class _AnalogClockCardState extends State<AnalogClockCard> {
   @override
   Widget build(BuildContext context) {
+    print(widget.Time.toString());
     return Card(
       shape: StadiumBorder(side: BorderSide(color: Colors.white70, width: 0.5)),
       child: FlutterAnalogClock(
@@ -171,7 +172,6 @@ class _AnalogClockCardState extends State<AnalogClockCard> {
         showNumber: true,
         borderWidth: 6.0,
         hourNumberScale: .10,
-        isLive: true,
         width: 200.0,
         height: 200.0,
         decoration: const BoxDecoration(),
