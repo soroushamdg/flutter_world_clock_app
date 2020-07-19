@@ -102,8 +102,14 @@ class _HomeState extends State<Home> {
           padding: const EdgeInsets.all(8.0),
           child: Center(
               child: GestureDetector(
-            child: AnalogClockCard(worldtime: Clocks[0], Time: Time),
-            onTap: () {},
+            child: (Clocks[0].clockAppearance == ClockAppearanceMode.digital)
+                ? DigitalClockCard(worldtime: Clocks[0], Time: Time)
+                : AnalogClockCard(worldtime: Clocks[0], Time: Time),
+            onTap: () {
+              setState(() {
+                Clocks[0].toggleClockAppearance();
+              });
+            },
           )),
         ),
       ),
@@ -154,19 +160,25 @@ class AnalogClockCard extends StatefulWidget {
 class _AnalogClockCardState extends State<AnalogClockCard> {
   @override
   Widget build(BuildContext context) {
-    print(widget.Time.toString());
     return Card(
       shape: StadiumBorder(side: BorderSide(color: Colors.white70, width: 0.5)),
       child: FlutterAnalogClock(
         dateTime: widget.Time,
-        dialPlateColor: Colors.white,
-        hourHandColor: Colors.black,
-        minuteHandColor: Colors.black,
-        secondHandColor: Colors.black,
-        numberColor: Colors.black,
-        borderColor: Colors.black,
-        tickColor: Colors.black,
-        centerPointColor: Colors.black,
+        dialPlateColor:
+            (widget.worldtime.DayTime) ? Colors.white : Colors.black87,
+        hourHandColor:
+            (widget.worldtime.DayTime) ? Colors.black87 : Colors.white70,
+        minuteHandColor:
+            (widget.worldtime.DayTime) ? Colors.black87 : Colors.white70,
+        secondHandColor:
+            (widget.worldtime.DayTime) ? Colors.black87 : Colors.white70,
+        numberColor:
+            (widget.worldtime.DayTime) ? Colors.black87 : Colors.white70,
+        borderColor:
+            (widget.worldtime.DayTime) ? Colors.black87 : Colors.white70,
+        tickColor: (widget.worldtime.DayTime) ? Colors.black87 : Colors.white70,
+        centerPointColor:
+            (widget.worldtime.DayTime) ? Colors.black87 : Colors.white70,
         showBorder: true,
         showTicks: true,
         showMinuteHand: true,
@@ -181,7 +193,26 @@ class _AnalogClockCardState extends State<AnalogClockCard> {
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
           child: Container(
             alignment: Alignment.bottomCenter,
-            child: Text(widget.worldtime.location),
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  height: 15,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(30),
+                  child: Image.asset('assets/img_world_map.png'),
+                ),
+                Text(
+                  widget.worldtime.location,
+                  style: TextStyle(
+                    color: (widget.worldtime.DayTime)
+                        ? Colors.black45
+                        : Colors.white54,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -209,7 +240,7 @@ class _DigitalClockCardState extends State<DigitalClockCard> {
     return Card(
       shape: RoundedRectangleBorder(
         side: BorderSide(color: Colors.white70, width: 0.5),
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(80),
       ),
       color: (widget.worldtime.DayTime) ? Colors.white : Colors.white10,
       child: Padding(
