@@ -54,10 +54,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
     }
     if (instance.status == true) {
       Navigator.pushReplacementNamed(context, '/home', arguments: {
-        'location': instance.location,
-        'flag': instance.flagURL,
-        'time': instance.time,
-        'daytime': instance.DayTime,
+        'WorldTimeObjects': [instance],
       });
     } else {
       setState(() {

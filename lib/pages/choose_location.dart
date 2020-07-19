@@ -50,10 +50,7 @@ class _ChooseLocationState extends State<ChooseLocation> {
       print('error => saving new worldtime to shared prefences. => $e');
     }
     Navigator.pop(context, {
-      'location': time.location,
-      'flag': time.flagURL,
-      'time': time.time,
-      'daytime': time.DayTime,
+      'WorldTimeObjects': [time],
     });
   }
 

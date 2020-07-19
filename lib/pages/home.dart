@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:WorldClock/services/back_ground.dart';
+import 'package:WorldClock/services/world_time.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_analog_clock/flutter_analog_clock.dart';
@@ -14,6 +15,7 @@ class _HomeState extends State<Home> {
   DateTime Time;
   Timer timer;
   String backgroundURL = '';
+  List<WorldTime> Clocks;
 
   void updateTime() {
     setState(() {
@@ -31,7 +33,7 @@ class _HomeState extends State<Home> {
 
   void getUpdateBackground() async {
     BackGrounder bg =
-        BackGrounder(location: data['location'], light: data['daytime']);
+        BackGrounder(location: Clocks[0].location, light: Clocks[0].DayTime);
     await bg.get_background();
     if (bg.image_url != null && bg.image_url.isNotEmpty) {
       setState(() {
@@ -82,9 +84,10 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context).settings.arguments;
+    Clocks = data['WorldTimeObjects'];
     try {
       if (Time == null) {
-        Time = DateTime.parse(data['time']);
+        Time = DateTime.parse(Clocks[0].time);
         getUpdateBackground();
       }
     } catch (e) {
@@ -92,14 +95,16 @@ class _HomeState extends State<Home> {
     }
 
     return Scaffold(
-      backgroundColor: (data['daytime']) ? Colors.white : Colors.black87,
+      backgroundColor: (Clocks[0].DayTime) ? Colors.white : Colors.black87,
       body: Container(
         decoration: returnBackgroundImage(),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Center(
-            child: AnalogClockCard(data: data, Time: Time),
-          ),
+              child: GestureDetector(
+            child: AnalogClockCard(worldtime: Clocks[0], Time: Time),
+            onTap: () {},
+          )),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -107,13 +112,9 @@ class _HomeState extends State<Home> {
           dynamic RecData = await Navigator.pushNamed(context, '/location');
           if (RecData != null) {
             setState(() {
-              data = {
-                'location': RecData['location'],
-                'flag': RecData['flag'],
-                'time': RecData['time'],
-                'daytime': RecData['daytime'],
-              };
-              Time = DateTime.parse(data['time']);
+              data = RecData;
+              Clocks = data['WorldTimeObjects'];
+              Time = DateTime.parse(Clocks[0].time);
               getUpdateBackground();
             });
           }
@@ -121,9 +122,10 @@ class _HomeState extends State<Home> {
         },
         child: Icon(
           Icons.map,
-          color: (data['daytime']) ? Colors.white : Colors.blue[50],
+          color: (Clocks[0].DayTime) ? Colors.white : Colors.blue[50],
         ),
-        backgroundColor: (data['daytime']) ? Colors.blueAccent : Colors.white60,
+        backgroundColor:
+            (Clocks[0].DayTime) ? Colors.blueAccent : Colors.white60,
       ),
     );
   }
@@ -138,11 +140,11 @@ class _HomeState extends State<Home> {
 class AnalogClockCard extends StatefulWidget {
   const AnalogClockCard({
     Key key,
-    @required this.data,
+    @required this.worldtime,
     @required this.Time,
   }) : super(key: key);
 
-  final Map data;
+  final WorldTime worldtime;
   final DateTime Time;
 
   @override
@@ -179,7 +181,7 @@ class _AnalogClockCardState extends State<AnalogClockCard> {
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
           child: Container(
             alignment: Alignment.bottomCenter,
-            child: Text(widget.data['location']),
+            child: Text(widget.worldtime.location),
           ),
         ),
       ),
@@ -190,11 +192,11 @@ class _AnalogClockCardState extends State<AnalogClockCard> {
 class DigitalClockCard extends StatefulWidget {
   const DigitalClockCard({
     Key key,
-    @required this.data,
+    @required this.worldtime,
     @required this.Time,
   }) : super(key: key);
 
-  final Map data;
+  final WorldTime worldtime;
   final DateTime Time;
 
   @override
@@ -209,7 +211,7 @@ class _DigitalClockCardState extends State<DigitalClockCard> {
         side: BorderSide(color: Colors.white70, width: 0.5),
         borderRadius: BorderRadius.circular(15),
       ),
-      color: (widget.data['daytime']) ? Colors.white : Colors.white10,
+      color: (widget.worldtime.DayTime) ? Colors.white : Colors.white10,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 20),
         child: Container(
@@ -222,12 +224,13 @@ class _DigitalClockCardState extends State<DigitalClockCard> {
                 height: 10,
               ),
               Text(
-                widget.data['location'],
+                widget.worldtime.location,
                 style: TextStyle(
                   fontSize: 28,
                   letterSpacing: 2,
-                  color:
-                      (widget.data['daytime']) ? Colors.black87 : Colors.white,
+                  color: (widget.worldtime.DayTime)
+                      ? Colors.black87
+                      : Colors.white,
                 ),
               ),
               SizedBox(
@@ -237,8 +240,9 @@ class _DigitalClockCardState extends State<DigitalClockCard> {
                 DateFormat.Hm().format(widget.Time),
                 style: TextStyle(
                   fontSize: 60,
-                  color:
-                      (widget.data['daytime']) ? Colors.black87 : Colors.white,
+                  color: (widget.worldtime.DayTime)
+                      ? Colors.black87
+                      : Colors.white,
                 ),
               )
             ],

@@ -2,7 +2,7 @@ import 'package:http/http.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 
-enum ClockAppereanceMode { digital, analog } // 2 state for clock appereance.
+enum ClockAppearanceMode { digital, analog } // 2 state for clock appereance.
 
 class WorldTime {
   String location;
@@ -13,7 +13,15 @@ class WorldTime {
   bool DayTime;
   WorldTime({this.location, this.flagURL, this.urlEndpoint});
 
-  var clockAppereance = ClockAppereanceMode.digital;
+  var clockAppearance = ClockAppearanceMode.digital;
+
+  void toggleClockAppearance() {
+    if (clockAppearance == ClockAppearanceMode.analog) {
+      clockAppearance = ClockAppearanceMode.digital;
+    } else {
+      clockAppearance = ClockAppearanceMode.analog;
+    }
+  }
 
   void setDayTimeBool(String time) {
     DayTime = (int.parse(time.split(':')[0]) > 18 ||
