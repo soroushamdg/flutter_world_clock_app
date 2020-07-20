@@ -29,6 +29,8 @@ dependencies:
   shared_preferences: ^0.4.3
   flutter_launcher_icons: ^0.7.3
   flutter_analog_clock: ^0.1.1
+  sqflite: ^1.0.0
+  path_provider: ^0.4.1
 
 flutter_icons:
   android: true

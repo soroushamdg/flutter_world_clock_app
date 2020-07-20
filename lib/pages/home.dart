@@ -115,6 +115,7 @@ class _HomeState extends State<Home> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
+          // TODO : ADD RECIEVED TIME ZONE OBJECT TO LIST OF TIMEZONES
           dynamic RecData = await Navigator.pushNamed(context, '/location');
           if (RecData != null) {
             setState(() {
@@ -140,6 +141,7 @@ class _HomeState extends State<Home> {
   void dispose() {
     timer?.cancel();
     super.dispose();
+    // TODO: SAVE LIST OF TIMEZONES
   }
 }
 

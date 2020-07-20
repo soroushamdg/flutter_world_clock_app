@@ -18,6 +18,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
     });
     WorldTime instance;
     try {
+      // TODO : LOAD PREVIOUS LIST OF OBJECTS
       final prefs = await SharedPreferences
           .getInstance(); // loading from shared prefences
       final location = prefs.getString('last_location') ?? null;

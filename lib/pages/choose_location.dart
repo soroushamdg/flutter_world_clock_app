@@ -34,6 +34,7 @@ class _ChooseLocationState extends State<ChooseLocation> {
     }
   }
 
+// TODO : RETURN TIME ZONE OBJECT TO HOME VIEW
   void updateTime(index) async {
     setState(() {
       loading = true;
