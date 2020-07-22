@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:WorldClock/services/world_time.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:WorldClock/utils/database.dart';
 
@@ -18,48 +16,46 @@ class _LoadingScreenState extends State<LoadingScreen> {
     setState(() {
       isLoading = true;
     });
-    WorldTime instance;
+
+    List<WorldTime> worldTimes;
+    // loading from database
+    // if database has query -> load into list
+    // if database has no items -> create Local Time query -> insert into query -> load into list
+
     try {
-      // TODO : LOAD PREVIOUS LIST OF OBJECTS
-      final prefs = await SharedPreferences
-          .getInstance(); // loading from shared prefences
-      final location = prefs.getString('last_location') ?? null;
-      final flagURL = prefs.getString('last_flagurl') ?? null;
-      final urlEndpoint = prefs.getString('last_urlEndpoint') ?? null;
-      if (location.isNotEmpty && flagURL.isNotEmpty && urlEndpoint.isNotEmpty) {
+      if (await DatabaseProvider().queryRowCount() == 0) {
+        // creating localtime object
+        WorldTime instance;
         instance = WorldTime(
-            //setting last world time.
-            location: location,
-            flagURL: flagURL,
-            urlEndpoint: urlEndpoint);
-        await instance.getTime();
-      } else {
-        instance = WorldTime(
+            id: 1,
             //setting default time as local time
             location: 'Local time',
             flagURL: 'local.png',
             urlEndpoint: 'LOCALTIME');
-        instance.status = true;
-        instance
-            .setDayTimeBool(DateFormat.Hm().format(DateTime.now().toLocal()));
-        instance.time = DateTime.now().toLocal().toString();
+        // inserting query into database
+        DatabaseProvider().insertWorldTime(instance);
+        instance.getTime();
+        worldTimes.add(instance);
+      } else {
+        worldTimes = await DatabaseProvider().readDatabase();
+        worldTimes = worldTimes
+            .map((worldtime) async {
+              await worldtime.getTime();
+              return worldtime;
+            })
+            .cast<WorldTime>()
+            .toList();
       }
     } catch (e) {
-      print('error => loading last worldtime => $e');
-      instance = WorldTime(
-          //setting default time as local time
-          location: 'Local time',
-          flagURL: 'local.png',
-          urlEndpoint: 'LOCALTIME');
-      instance.status = true;
-      instance.setDayTimeBool(DateFormat.Hm().format(DateTime.now().toLocal()));
-      instance.time = DateTime.now().toLocal().toString();
+      print('error in loading or initing database. => $e');
+      setState(() {
+        isLoading = false;
+      });
     }
-
     // send data to home view
-    if (instance.status == true) {
+    if (worldTimes.isNotEmpty) {
       Navigator.pushReplacementNamed(context, '/home', arguments: {
-        'WorldTimeObjects': [instance],
+        'WorldTimeObjects': worldTimes,
       });
     } else {
       setState(() {

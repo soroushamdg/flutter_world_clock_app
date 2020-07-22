@@ -32,6 +32,12 @@ class WorldTime {
   }
 
   Future<void> getTime() async {
+    if (location == '') {
+      status = true;
+      setDayTimeBool(DateFormat.Hm().format(DateTime.now().toLocal()));
+      time = DateTime.now().toLocal().toString();
+      return;
+    }
     try {
       Response response =
           await get('http://worldtimeapi.org/api/timezone/$urlEndpoint');
