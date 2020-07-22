@@ -15,7 +15,6 @@ Simple flutter application that can show World Clock.
 - [x] ability to change between analog and digital -> pic:3
 - [x] world map background to analog
 - [ ] ability to add multiple timezones
-- [ ] ability to get weather data
 
 
 ### screen-shots :

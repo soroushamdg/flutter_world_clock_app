@@ -5,13 +5,14 @@ import 'package:intl/intl.dart';
 enum ClockAppearanceMode { digital, analog } // 2 state for clock appereance.
 
 class WorldTime {
-  String location;
+  final int id;
+  final String location;
   String time;
   String flagURL;
-  String urlEndpoint;
+  final String urlEndpoint;
   bool status;
   bool DayTime;
-  WorldTime({this.location, this.flagURL, this.urlEndpoint});
+  WorldTime({this.id, this.location, this.flagURL, this.urlEndpoint});
 
   var clockAppearance = ClockAppearanceMode.digital;
 
@@ -62,5 +63,16 @@ class WorldTime {
       print('caught error : $e');
       status = false;
     }
+  }
+
+  /// integrating database, map function
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'location': location,
+      'urlepoint': urlEndpoint,
+      'clockAppereance':
+          (clockAppearance == ClockAppearanceMode.digital) ? 0 : 1,
+    };
   }
 }

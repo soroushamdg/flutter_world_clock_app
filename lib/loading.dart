@@ -4,17 +4,19 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:WorldClock/utils/database.dart';
+
 class LoadingScreen extends StatefulWidget {
   @override
   _LoadingScreenState createState() => _LoadingScreenState();
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  bool status = true;
+  bool isLoading = true;
 
   void setupWorldTime() async {
     setState(() {
-      status = true;
+      isLoading = true;
     });
     WorldTime instance;
     try {
@@ -53,13 +55,15 @@ class _LoadingScreenState extends State<LoadingScreen> {
       instance.setDayTimeBool(DateFormat.Hm().format(DateTime.now().toLocal()));
       instance.time = DateTime.now().toLocal().toString();
     }
+
+    // send data to home view
     if (instance.status == true) {
       Navigator.pushReplacementNamed(context, '/home', arguments: {
         'WorldTimeObjects': [instance],
       });
     } else {
       setState(() {
-        status = false;
+        isLoading = false;
       });
     }
   }
@@ -80,7 +84,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
             padding: EdgeInsets.all(25),
             child: Center(
                 child: LoaderRetry(
-                    status: status,
+                    status: isLoading,
                     func: () {
                       setupWorldTime();
                     }))),
