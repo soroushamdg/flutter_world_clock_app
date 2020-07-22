@@ -2,16 +2,19 @@ import 'package:http/http.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 
+import 'back_ground.dart';
+
 enum ClockAppearanceMode { digital, analog } // 2 state for clock appereance.
 
 class WorldTime {
-  final int id;
+  int id;
   final String location;
-  String time;
+  DateTime time;
   String flagURL;
   final String urlEndpoint;
   bool status;
   bool DayTime;
+  String backgroundURL = '';
   WorldTime({this.id, this.location, this.flagURL, this.urlEndpoint});
 
   var clockAppearance = ClockAppearanceMode.digital;
@@ -32,10 +35,10 @@ class WorldTime {
   }
 
   Future<void> getTime() async {
-    if (location == '') {
+    if (urlEndpoint == 'LOCALTIME') {
       status = true;
       setDayTimeBool(DateFormat.Hm().format(DateTime.now().toLocal()));
-      time = DateTime.now().toLocal().toString();
+      time = DateTime.now().toLocal();
       return;
     }
     try {
@@ -61,9 +64,9 @@ class WorldTime {
               hours: int.parse(offset['hour']),
               minutes: int.parse(offset['minutes'])));
 
-      time = DateFormat.Hm().format(now); //set the time property
-      setDayTimeBool(time);
-      time = now.toString();
+      setDayTimeBool(DateFormat.Hm().format(now));
+      await getBackgroundURL();
+      time = now;
       status = true;
     } catch (e) {
       print('caught error : $e');
@@ -80,5 +83,13 @@ class WorldTime {
       'clockAppereance':
           (clockAppearance == ClockAppearanceMode.digital) ? 0 : 1,
     };
+  }
+
+  Future<void> getBackgroundURL() async {
+    BackGrounder bg =
+        BackGrounder(location: this.location, light: this.DayTime);
+    await bg.get_background();
+    this.backgroundURL = bg.image_url;
+    print(this.backgroundURL);
   }
 }

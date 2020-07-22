@@ -12,14 +12,14 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   Map data = {};
-  DateTime Time;
   Timer timer;
-  String backgroundURL = '';
   List<WorldTime> Clocks;
 
   void updateTime() {
     setState(() {
-      Time = Time.add(Duration(seconds: 1));
+      Clocks = Clocks.map((worldtime) {
+        worldtime.time.add(Duration(seconds: 1));
+      }).cast<WorldTime>().toList();
     });
   }
 
@@ -31,42 +31,35 @@ class _HomeState extends State<Home> {
     }
   }
 
-  void getUpdateBackground() async {
-    BackGrounder bg =
-        BackGrounder(location: Clocks[0].location, light: Clocks[0].DayTime);
-    await bg.get_background();
-    if (bg.image_url != null && bg.image_url.isNotEmpty) {
-      setState(() {
-        backgroundURL = bg.image_url;
-      });
-    } else {
-      setState(() {
-        backgroundURL = '';
-      });
-    }
-  }
-
-  BoxDecoration returnBackgroundImage() {
-    if (this.backgroundURL.isNotEmpty) {
-      try {
+  BoxDecoration returnBackgroundImage(WorldTime worldtime) {
+    try {
+      if (worldtime.backgroundURL.isNotEmpty) {
         try {
-          var image =
-              NetworkImage('http://' + this.backgroundURL.split('//')[1]);
+          try {
+            var image = NetworkImage(
+                'http://' + worldtime.backgroundURL.split('//')[1]);
+          } catch (e) {
+            print('error in downloading image => $e');
+            return null;
+          }
+          return BoxDecoration(
+              image: DecorationImage(
+                  image: NetworkImage(
+                      'http://' + worldtime.backgroundURL.split('//')[1]),
+                  fit: BoxFit.cover));
         } catch (e) {
-          print('error in downloading image => $e');
-          return null;
+          print('error in returning background decoration image object');
+          return BoxDecoration(
+            color: (worldtime.DayTime == true) ? Colors.white : Colors.black87,
+          );
         }
+      } else {
         return BoxDecoration(
-            image: DecorationImage(
-                image:
-                    NetworkImage('http://' + this.backgroundURL.split('//')[1]),
-                fit: BoxFit.cover));
-      } catch (e) {
-        print('error in returning background decoration image object');
-        return null;
+          color: (worldtime.DayTime == true) ? Colors.white : Colors.black87,
+        );
       }
-    } else {
-      return null;
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -85,44 +78,41 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     data = data.isNotEmpty ? data : ModalRoute.of(context).settings.arguments;
     Clocks = data['WorldTimeObjects'];
-    try {
-      if (Time == null) {
-        Time = DateTime.parse(Clocks[0].time);
-        getUpdateBackground();
-      }
-    } catch (e) {
-      print('error => setting Time value => $e');
-    }
 
+// TODO: implement pageview widget to show all clocks.
     return Scaffold(
-      backgroundColor: (Clocks[0].DayTime) ? Colors.white : Colors.black87,
-      body: Container(
-        decoration: returnBackgroundImage(),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Center(
-              child: GestureDetector(
-            child: (Clocks[0].clockAppearance == ClockAppearanceMode.digital)
-                ? DigitalClockCard(worldtime: Clocks[0], Time: Time)
-                : AnalogClockCard(worldtime: Clocks[0], Time: Time),
-            onTap: () {
-              setState(() {
-                Clocks[0].toggleClockAppearance();
-              });
-            },
-          )),
-        ),
+      body: PageView(
+        pageSnapping: true,
+        children: Clocks.map((worldtime) {
+          return Container(
+            decoration: returnBackgroundImage(worldtime),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                  child: GestureDetector(
+                child:
+                    (worldtime.clockAppearance == ClockAppearanceMode.digital)
+                        ? DigitalClockCard(
+                            worldtime: worldtime, Time: worldtime.time)
+                        : AnalogClockCard(
+                            worldtime: worldtime, Time: worldtime.time),
+                onTap: () {
+                  setState(() {
+                    worldtime.toggleClockAppearance();
+                  });
+                },
+              )),
+            ),
+          );
+        }).cast<Widget>().toList(),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          // TODO : ADD RECIEVED TIME ZONE OBJECT TO LIST OF TIMEZONES
           dynamic RecData = await Navigator.pushNamed(context, '/location');
           if (RecData != null) {
             setState(() {
-              data = RecData;
+              data['WorldTimeObjects'].add(RecData['WorldTimeObject']);
               Clocks = data['WorldTimeObjects'];
-              Time = DateTime.parse(Clocks[0].time);
-              getUpdateBackground();
             });
           }
           ;
@@ -141,7 +131,6 @@ class _HomeState extends State<Home> {
   void dispose() {
     timer?.cancel();
     super.dispose();
-    // TODO: SAVE LIST OF TIMEZONES
   }
 }
 

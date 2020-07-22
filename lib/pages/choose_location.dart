@@ -1,4 +1,5 @@
 import 'package:WorldClock/services/world_time.dart';
+import 'package:WorldClock/utils/database.dart';
 import 'package:flutter/material.dart';
 import 'package:WorldClock/services/time_zones.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -40,18 +41,19 @@ class _ChooseLocationState extends State<ChooseLocation> {
       loading = true;
     });
     WorldTime time = locations[index];
-    await time.getTime();
+    time.id = await DatabaseProvider().queryRowCount() + 1;
+
+    // inserting into database
     try {
-      final prefs = await SharedPreferences
-          .getInstance(); // loading from shared prefences
-      prefs.setString('last_location', time.location);
-      prefs.setString('last_flagurl', time.flagURL);
-      prefs.setString('last_urlEndpoint', time.urlEndpoint);
+      DatabaseProvider().insertWorldTime(time);
     } catch (e) {
-      print('error => saving new worldtime to shared prefences. => $e');
+      print('error => inserting new worldtime to database. => $e');
     }
+
+    await time.getTime();
+
     Navigator.pop(context, {
-      'WorldTimeObjects': [time],
+      'WorldTimeObject': time,
     });
   }
 

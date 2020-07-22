@@ -17,7 +17,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
       isLoading = true;
     });
 
-    List<WorldTime> worldTimes;
+    List<WorldTime> worldTimes = [];
     // loading from database
     // if database has query -> load into list
     // if database has no items -> create Local Time query -> insert into query -> load into list
@@ -34,7 +34,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
             urlEndpoint: 'LOCALTIME');
         // inserting query into database
         DatabaseProvider().insertWorldTime(instance);
-        instance.getTime();
+        await instance.getTime();
         worldTimes.add(instance);
       } else {
         worldTimes = await DatabaseProvider().readDatabase();
@@ -53,7 +53,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
       });
     }
     // send data to home view
-    if (worldTimes.isNotEmpty) {
+    if (worldTimes != null && worldTimes.isNotEmpty) {
       Navigator.pushReplacementNamed(context, '/home', arguments: {
         'WorldTimeObjects': worldTimes,
       });

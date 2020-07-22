@@ -13,6 +13,7 @@ Future<List<WorldTime>> DefineLocations() async {
     locations = data.map((timezone) {
       if (timezone.toString().contains('/')) {
         return WorldTime(
+            id: 0,
             location: timezone.split('/')[1],
             flagURL: timezone.split('/')[1].toString().toLowerCase() + '.png',
             urlEndpoint: timezone);

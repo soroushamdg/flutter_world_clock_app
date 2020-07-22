@@ -11,7 +11,7 @@ class DatabaseProvider {
     join(getDatabasesPath().toString(), 'world_clocks.db'),
     onCreate: (db, version) {
       return db.execute(
-          'CREATE TABLE $tableName(id INTEGER PRIMARY KEY, location TEXT,urlepoint TEXT, clockAppereance INTEGER');
+          'CREATE TABLE $tableName(id INTEGER PRIMARY KEY, location TEXT,urlepoint TEXT, clockAppereance INTEGER)');
     },
     version: 1,
   );
@@ -19,6 +19,7 @@ class DatabaseProvider {
   // insert new item
   Future<void> insertWorldTime(WorldTime worldtime) async {
     final Database db = await database;
+    print(db);
     await db.insert(tableName, worldtime.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
