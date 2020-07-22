@@ -19,4 +19,4 @@ Simple flutter application that can show World Clock.
 
 
 ### screen-shots :
-![pic:1](scr1.png) ![pic:2](scr2.png) ![pic:3](scr3.gif) ![pic:4](scr4.mp4) ![pic:4](scr4.webm)
+![pic:1](scr1.png) ![pic:2](scr2.png) ![pic:3](scr3.gif) ![pic:4](scr4.gif)
